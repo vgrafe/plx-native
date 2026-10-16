@@ -10,6 +10,26 @@ properly factored and finished; "only a demo" is never a reason to leave a short
 The target is a cross-compiled 32-bit ARM application with a hardware video plane. Host tests and
 the macOS simulator are valuable, but they cannot prove every device behavior.
 
+## Independent fork and attribution
+
+This repository, `vgrafe/plx-native`, is independently maintained from
+[GLinnik21/plx-native](https://github.com/GLinnik21/plx-native), originally created
+by Gleb Linnik and contributors. Since 2026-10-16, development is planned around
+this fork's own requirements. Do not plan routine upstream synchronization or
+upstream submissions; reconsider either only if the user explicitly requests it.
+
+- Preserve original copyright/author credit, GPL-3.0-or-later licensing,
+  modification notices with relevant dates, historical license grants, and
+  third-party notices. Credit the original project clearly and distinguish
+  this fork's changes; do not imply upstream endorsement.
+- Follow `LICENSE`, `LICENSING.md`, `THIRD-PARTY-NOTICES.md`, and `licenses/`.
+  Binary distributions need matching complete source and build materials,
+  including applicable dependency sources and installation information.
+- Follow `TRADEMARKS.md`: the PlxNative name and PLX brand artwork are reserved
+  as the identity of derived distributions. Use a distinct name and artwork,
+  or obtain permission, before distributing this independent app. Descriptive
+  attribution to the original project remains appropriate.
+
 ## Load the right context
 
 - `docs/agent-reference.md` is the detailed architecture, build, portability, and verification
@@ -27,16 +47,15 @@ the macOS simulator are valuable, but they cannot prove every device behavior.
 
 ## Working rules
 
-- **Trunk-based development, and `main` takes SQUASH merges only.** Work happens on short-lived
-  branches or worktrees cut from `main`. Commit as often as is useful on a branch — there is no
-  limit on how many commits a branch carries and no need to tidy them. When the work is verified it
-  lands on `main` as ONE squash commit whose message is the change's own account: the PR's squash
-  merge on GitHub, never a squash made locally and pushed, never a fast-forward of a working
-  branch's history and never a merge commit. To bring a moving `main` in, merge it into the branch. A fleet of lanes
-  integrates into its integration branch however it likes; what reaches `main` is the squash of the
-  whole. The reason is the history itself: `main` is read by `git log`, by the release audit and by
-  `git bisect`, and a trunk of "fix typo" / "wip" / merge commits pollutes all three. Push `main`
-  only when the user asked for it.
+- **`main` is this independent fork's development trunk.** Work on one branch
+  at a time in the existing checkout; do not create additional worktrees unless
+  the user explicitly requests them. Coordinate chats so only one task writes
+  to the checkout at a time. Use short-lived task branches from this fork's
+  `main` when useful; a separate `tv` integration branch or upstream PR is not
+  required. Scoped direct commits and deliberate merges into `main` are allowed
+  when requested. Inspect the full incoming diff, preserve unrelated feature
+  work, and verify the exact committed result. Push only to the intended owned
+  repository and only when authorized; push `main` only when the user asks.
 - **A diff stat is not a measure of change.** `dec32f2e` ran rustfmt over all of `ui/`, so
   `detail.rs` read +2416 lines for +113 characters of content. `git diff -w` does not rescue it —
   that ignores whitespace *within* a line, not one line split into three. Size a change by content
@@ -49,11 +68,6 @@ the macOS simulator are valuable, but they cannot prove every device behavior.
   `[port webos]` to `webos`, `keymanager`, `system`, `player::ffi` or `port`. Fix the reference
   (`docs/module-layers.md` says where code belongs and how to cut an upward name) instead of
   adding a (file, member) pair to `ci/allow/layers.txt`, which is empty and only shrinks.
-- **Re-basing a stacked PR after the one below it squashes:** on the upper branch, `git merge
-  <lower's final head>`, `git merge <squash>^`, `git merge -s ours <squash>`, then
-  `git merge origin/main`. `-s ours` on the squash alone drops whatever `main` gained before it.
-- `gh pr merge --auto --squash --match-head-commit <sha>` can fail just after a push with "expected
-  head oid does not match"; wait ~15 s and retry. It is a race, not a real mismatch.
 - Preserve unrelated user changes and generated artifacts. Never clean or reset a dirty tree to
   make a task easier.
 - This repository is public. Never publish values from gitignored private files such as `.tv-host`,
